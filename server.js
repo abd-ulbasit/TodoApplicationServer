@@ -1,7 +1,9 @@
 require("dotenv").config();
+const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
+app.use(cors());
 const Todo = require("./models/Todo");
 app.use(express.json());
 mongoose
@@ -31,8 +33,8 @@ app.post("/newtodo", async (req, res) => {
         });
     }
 });
-app.get("/todoList", async (req, res) => {
-    const todolist = await Todo.find({ username: req.body.username });
+app.get("/todolist", async (req, res) => {
+    const todolist = await Todo.find({ username: req.query.username });
     try {
         res.status(200).json({
             status: "success",
@@ -109,12 +111,14 @@ app.listen(port, () => console.log(`Listening on port: ${port}`));
 //     "isStarred": true,
 //     "isArchived": false,
 //     "updatedOn": "2022-09-18T07:27:37.192Z"
+//      "completed":false
 //   }
 
 // ? this is how you make a new get request to this api to get todos of a user
 //! Get
 // ? http://localhost:5000/todolist
 // * request.body:
+// in axios params
 // {
 //     "username":"basit",
 //   }

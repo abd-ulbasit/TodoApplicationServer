@@ -6,5 +6,6 @@ const TodoSchema = new Schema({
     isStarred: Boolean,
     isArchived: Boolean,
     updatedOn: Date,
+    completed: Boolean,
 });
 module.exports = model("Todo", TodoSchema);
