@@ -19,6 +19,7 @@ mongoose
     });
 console.log();
 app.post("/newtodo", async (req, res) => {
+    // console.log(req.body);
     const newTodo = new Todo(req.body);
     try {
         await newTodo.save();
