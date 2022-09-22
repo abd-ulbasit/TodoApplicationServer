@@ -15,7 +15,7 @@ mongoose
         console.log("connected to DB");
     })
     .catch((err) => {
-        console.log(err);
+        console.log(err.message);
     });
 console.log();
 app.post("/newtodo", async (req, res) => {
@@ -73,6 +73,7 @@ app.patch("/updatetodo", async (req, res) => {
     }
 });
 app.delete("/deletetodo", async (req, res) => {
+    console.log(req.body.id);
     try {
         await Todo.findByIdAndDelete(req.body.id);
         console.log("after deleting");
