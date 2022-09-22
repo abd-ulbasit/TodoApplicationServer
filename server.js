@@ -35,7 +35,10 @@ app.post("/newtodo", async (req, res) => {
     }
 });
 app.get("/todolist", async (req, res) => {
-    const todolist = await Todo.find({ username: req.query.username });
+    const todolist = await Todo.find({
+        username: req.query.username,
+        isArchived: false,
+    });
     try {
         res.status(200).json({
             status: "success",
