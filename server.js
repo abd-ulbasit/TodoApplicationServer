@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const app = express();
 app.use(cors());
 const Todo = require("./models/Todo");
+const User = require("./models/User");
 app.use(express.json());
 mongoose
     .connect(process.env.URI, {
@@ -51,6 +52,24 @@ app.get("/todolist", async (req, res) => {
         });
     }
 });
+app.get("/archivedtodos", async (req, res) => {
+    const todolist = await Todo.find({
+        username: req.query.username,
+        isArchived: true,
+    });
+    try {
+        res.status(200).json({
+            status: "success",
+            data: todolist,
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: "failed",
+            message: error,
+        });
+    }
+});
+
 app.patch("/updatetodo", async (req, res) => {
     try {
         console.log(req.body.id);
@@ -90,6 +109,75 @@ app.delete("/deletetodo", async (req, res) => {
         });
     }
 });
+
+app.post("/newuser", async (req, res) => {
+    const userInDB = await User.find({ username: req.body.username });
+    console.log(userInDB);
+    if (userInDB.length > 0) {
+        res.status(200).send(
+            JSON.stringify({ message: "User Already Exists" })
+        );
+        return;
+    }
+    const newUser = new User(req.body);
+    console.log(newUser);
+    try {
+        await newUser.save();
+        res.status(201).send(newUser);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+app.post("/users", async (req, res) => {
+    console.log(req.body.username);
+    try {
+        const user = await User.findOne({
+            $and: [
+                { username: req.body.username },
+                { password: req.body.password },
+            ],
+        });
+        if (user) {
+            res.status(200).send(user);
+        } else {
+            res.status(200).send({
+                message: "User Not Found",
+            });
+        }
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+app.get("/users", async (req, res) => {
+    try {
+        const users = await User.find({}, { username: 1 })
+            .sort({ _id: -1 })
+            .limit(15);
+        res.status(200).send(users);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+app.get("/finduser", async (req, res) => {
+    try {
+        const user = await User.find(
+            {
+                username: { $regex: req.query.search, $options: "i" },
+            },
+            { username: 1 }
+        );
+        if (user) {
+            res.status(200).send(user);
+        } else {
+            res.status(200).send({
+                message: "User Not Found",
+            });
+        }
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 const port = process.env.PORT || 8000;
 
 app.listen(port, () => console.log(`Listening on port: ${port}`));
