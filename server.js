@@ -18,7 +18,7 @@ mongoose
     .catch((err) => {
         console.log(err.message);
     });
-console.log();
+// console.log();
 app.post("/newtodo", async (req, res) => {
     // console.log(req.body);
     const newTodo = new Todo(req.body);
@@ -69,11 +69,10 @@ app.get("/archivedtodos", async (req, res) => {
         });
     }
 });
-
 app.patch("/updatetodo", async (req, res) => {
     try {
-        console.log(req.body.id);
-        console.log(req.body.fieldToUpdate);
+        // console.log(req.body.id);
+        // console.log(req.body.fieldToUpdate);
         const updatedTodo = await Todo.findByIdAndUpdate(
             req.body.id,
             req.body.fieldToUpdate,
@@ -82,7 +81,7 @@ app.patch("/updatetodo", async (req, res) => {
                 runValidators: true,
             }
         );
-        console.log(updatedTodo);
+        // console.log(updatedTodo);
         res.status(201).json({
             status: "success",
             data: updatedTodo,
@@ -98,7 +97,7 @@ app.delete("/deletetodo", async (req, res) => {
     console.log(req.body.id);
     try {
         await Todo.findByIdAndDelete(req.body.id);
-        console.log("after deleting");
+        // console.log("after deleting");
         res.status(204).json({
             status: "success",
             message: "deleted Successfully",
@@ -112,7 +111,7 @@ app.delete("/deletetodo", async (req, res) => {
 
 app.post("/newuser", async (req, res) => {
     const userInDB = await User.find({ username: req.body.username });
-    console.log(userInDB);
+    // console.log(userInDB);
     if (userInDB.length > 0) {
         res.status(200).send(
             JSON.stringify({ message: "User Already Exists" })
@@ -120,7 +119,7 @@ app.post("/newuser", async (req, res) => {
         return;
     }
     const newUser = new User(req.body);
-    console.log(newUser);
+    // console.log(newUser);
     try {
         await newUser.save();
         res.status(201).send(newUser);
@@ -129,7 +128,7 @@ app.post("/newuser", async (req, res) => {
     }
 });
 app.post("/users", async (req, res) => {
-    console.log(req.body.username);
+    // console.log(req.body.username);
     try {
         const user = await User.findOne({
             $and: [
@@ -138,40 +137,31 @@ app.post("/users", async (req, res) => {
             ],
         });
         if (user) {
+            console.log(user);
             res.status(200).send(user);
         } else {
-            res.status(200).send({
-                message: "User Not Found",
-            });
-        }
-    } catch (error) {
-        res.status(500).send(error);
-    }
-});
-app.get("/users", async (req, res) => {
-    try {
-        const users = await User.find({}, { username: 1 })
-            .sort({ _id: -1 })
-            .limit(15);
-        res.status(200).send(users);
-    } catch (error) {
-        res.status(500).send(error);
-    }
-});
-app.get("/finduser", async (req, res) => {
-    try {
-        const user = await User.find(
-            {
-                username: { $regex: req.query.search, $options: "i" },
-            },
-            { username: 1 }
-        );
-        if (user) {
-            res.status(200).send(user);
-        } else {
-            res.status(200).send({
-                message: "User Not Found",
-            });
+            try {
+                const user = await User.findOne({
+                    $or: [
+                        { username: req.body.username },
+                        { password: req.body.password },
+                    ],
+                });
+                console.log(user);
+                if (user) {
+                    console.log(user);
+                    console.log(202);
+                    res.status(202).send({
+                        message: "wrong",
+                    });
+                } else {
+                    res.status(204).send({
+                        message: "User Not Found",
+                    });
+                }
+            } catch (err) {
+                res.status(500).send(err);
+            }
         }
     } catch (error) {
         res.status(500).send(error);
