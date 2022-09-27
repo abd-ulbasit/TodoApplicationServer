@@ -3,7 +3,11 @@ const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-app.use(cors());
+app.use(
+    cors({
+        origin: ["http://localhost:5173"],
+    })
+);
 const Todo = require("./models/Todo");
 const User = require("./models/User");
 app.use(express.json());
