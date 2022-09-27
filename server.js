@@ -35,6 +35,9 @@ app.post("/newtodo", async (req, res) => {
         });
     }
 });
+app.get("/hello", (req, res) => {
+    res.send(JSON.stringify({ message: "Hello World" }));
+});
 app.get("/todolist", async (req, res) => {
     const todolist = await Todo.find({
         username: req.query.username,
