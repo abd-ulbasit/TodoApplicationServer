@@ -6,7 +6,10 @@ const app = express();
 app.use(
     cors({
         methods: ["GET", "POST", "DELETE", "PATCH"],
-        origin: "http://localhost:5173",
+        origin: [
+            "http://localhost:5173",
+            "https://ihavetodothistodo.onrender.com",
+        ],
     })
 );
 const Todo = require("./models/Todo");
