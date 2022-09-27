@@ -105,7 +105,7 @@ app.patch("/updatetodo", async (req, res) => {
     }
 });
 app.delete("/deletetodo", async (req, res) => {
-    console.log(req.body.id);
+    // console.log(req.body.id);
     try {
         await Todo.findByIdAndDelete(req.body.id);
         // console.log("after deleting");
@@ -148,7 +148,7 @@ app.post("/users", async (req, res) => {
             ],
         });
         if (user) {
-            console.log(user);
+            // console.log(user);
             res.status(200).send(user);
         } else {
             try {
@@ -158,9 +158,9 @@ app.post("/users", async (req, res) => {
                         { password: req.body.password },
                     ],
                 });
-                console.log(user);
+                // console.log(user);
                 if (user) {
-                    console.log(user);
+                    // console.log(user);
                     console.log(202);
                     res.status(202).send({
                         message: "wrong",
